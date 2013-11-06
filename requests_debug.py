@@ -6,7 +6,7 @@ import threading
 
 __version__ = '0.1'
 
-LOG = logging.getLogger(__name__ + ".requests")
+LOG = logging.getLogger(__name__)
 __LOCALS = threading.local()
 
 ###############################################################################
@@ -82,7 +82,7 @@ def __patch_session(thread_local):
                        "status": status}
 
                 thread_local.items.append(data)
-                LOG.info("%s %s %.4f", method, full_url, duration,
+                LOG.debug("%s %s %.4f", method, full_url, duration,
                                  extra=data)
 
         return inner
