@@ -4,6 +4,8 @@ import logging
 import urllib
 import threading
 
+__version__ = '0.1'
+
 LOG = logging.getLogger(__name__ + ".requests")
 __LOCALS = threading.local()
 
