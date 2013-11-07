@@ -50,7 +50,7 @@ def start_server():
             start_response("200 OK", [])
             return ["ok."]
 
-    http_server = make_server('', 0, app)
+    http_server = make_server('127.0.0.1', 0, app)
     server_thread = threading.Thread(target=http_server.serve_forever)
     server_thread.start()
     yield http_server
