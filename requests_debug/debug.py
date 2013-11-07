@@ -16,8 +16,11 @@ def install_hook(thread_local=__LOCALS):
     """
     Install the hook into the requests library
     """
-    clear_items(thread_local=thread_local)
+    # clear out any existing hooks
+    uninstall_hook(thread_local=thread_local)
+    # checkpoint the items
     checkpoint(thread_local=thread_local)
+    # install the patch
     __patch_session(thread_local)
 
 
