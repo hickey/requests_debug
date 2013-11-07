@@ -4,6 +4,7 @@ import logging
 import urllib
 import threading
 import simpleflake
+import traceback
 
 LOG = logging.getLogger(__name__)
 __LOCALS = threading.local()
@@ -16,8 +17,11 @@ def install_hook(thread_local=__LOCALS):
     """
     Install the hook into the requests library
     """
-    clear_items(thread_local=thread_local)
+    # clear out any existing hooks
+    uninstall_hook(thread_local=thread_local)
+    # checkpoint the items
     checkpoint(thread_local=thread_local)
+    # install the patch
     __patch_session(thread_local)
 
 
@@ -88,7 +92,7 @@ def __patch_session(thread_local):
                    "method": method,
                    "url": full_url,
                    "checkpoint_id": thread_local.checkpoint_id,
-                   "exception_str": None,
+                   "exception": None,
                    "status": None}
             # insert the initial data, we'll mutate it on completion
             thread_local.items.append(data)
@@ -98,16 +102,18 @@ def __patch_session(thread_local):
                 data['status'] = response.status_code
                 return response
             except Exception, e:
-                LOG.exception("Error Making Request %s %s %s", method,
-                              full_url, data['checkpoint_id'], extra=data)
-                data['exception_str'] = str(e)
+                LOG.exception("Error Making Request %s %s checkpoint=%s", method,
+                              full_url, data['checkpoint_id'])
+                data['exception'] = traceback.format_exc()
                 raise
             finally:
                 end = time()
                 duration = end - start
                 data['time_float'] = duration
                 data['time'] = "%.3f" % duration,
-                LOG.debug("%s %s %.4f", method, full_url, duration, extra=data)
+                LOG.debug("%s %s %.4f checkpoint=%s", 
+                          method, full_url, duration, data['checkpoint_id'], 
+                          extra=data)
 
         return inner
 
