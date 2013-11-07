@@ -8,7 +8,8 @@ import requests
 import time
 from testfixtures import compare
 from contextlib import contextmanager
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 

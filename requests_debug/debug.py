@@ -102,8 +102,8 @@ def __patch_session(thread_local):
                 data['status'] = response.status_code
                 return response
             except Exception, e:
-                LOG.exception("Error Making Request %s %s %s", method,
-                              full_url, data['checkpoint_id'], extra=data)
+                LOG.exception("Error Making Request %s %s checkpoint=%s", method,
+                              full_url, data['checkpoint_id'])
                 data['exception'] = traceback.format_exc()
                 raise
             finally:
@@ -111,7 +111,9 @@ def __patch_session(thread_local):
                 duration = end - start
                 data['time_float'] = duration
                 data['time'] = "%.3f" % duration,
-                LOG.debug("%s %s %.4f", method, full_url, duration, extra=data)
+                LOG.debug("%s %s %.4f checkpoint=%s", 
+                          method, full_url, duration, data['checkpoint_id'], 
+                          extra=data)
 
         return inner
 
