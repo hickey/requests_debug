@@ -4,7 +4,7 @@ import SimpleHTTPServer
 import SocketServer
 from functools import partial
 from pprint import pprint
-import requests_debug; requests_debug.install_hook()
+from requests_debug import debug as requests_debug; requests_debug.install_hook()
 import requests
 import time
 from testfixtures import compare
@@ -24,7 +24,7 @@ def client_thread_target(results_q, thread_id, url):
         )
         
     results_q.put(
-            (thread_id, requests_debug.items())
+            (thread_id, requests_debug.checkpoint_id(), requests_debug.items())
     )
 
 
@@ -85,32 +85,39 @@ def test_threading():
     # make the results look like the values we care about
     def normalize(results):
         return [
-            (thread_id, 
+            (thread_id, checkpoint_id,
              [
                     {'method': item['method'],
+                     'checkpoint_id': item['checkpoint_id'],
                      'url': item['url']}
                     for item in items
                     ])
-            for thread_id, items in results
+            for thread_id, checkpoint_id, items in results
         ]
 
     compare(normalize(results), [
-            (0, [
+            (0, results[0][1], [
                     {'method': 'get',
+                     'checkpoint_id': results[0][1],
                      'url': make_url("test.py?thread_id=0&n=0")},
                     {'method': 'get',
+                     'checkpoint_id': results[0][1],
                      'url': make_url("test.py?thread_id=0&n=1")},
                 ]),
-            (1, [
+            (1, results[1][1], [
                     {'method': 'get',
+                     'checkpoint_id': results[1][1],
                      'url': make_url("test.py?thread_id=1&n=0")},
                     {'method': 'get',
+                     'checkpoint_id': results[1][1],
                      'url': make_url("test.py?thread_id=1&n=1")},
                 ]),
-            (2, [
+            (2, results[2][1], [
                     {'method': 'get',
+                     'checkpoint_id': results[2][1],
                      'url': make_url("404?thread_id=2&n=0")},
                     {'method': 'get',
+                     'checkpoint_id': results[2][1],
                      'url': make_url("404?thread_id=2&n=1")},
                     ])])
 
