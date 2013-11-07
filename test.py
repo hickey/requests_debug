@@ -35,6 +35,10 @@ def client_thread(results_q, thread_id, url):
             )
         )
 
+def server_timeout_thread(timeout, http_server):
+    time.sleep(timeout)
+    stop_server(http_server)
+
 
 @contextmanager
 def start_server():
@@ -51,6 +55,12 @@ def start_server():
             return ["ok."]
 
     http_server = make_server('127.0.0.1', 0, app)
+    timeout_thread = threading.Thread(
+        target=partial(
+            server_timeout_thread,
+            3,
+            http_server))
+    timeout_thread.start()
     server_thread = threading.Thread(target=http_server.serve_forever)
     server_thread.start()
     yield http_server
