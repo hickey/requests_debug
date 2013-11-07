@@ -4,6 +4,7 @@ import logging
 import urllib
 import threading
 import simpleflake
+import traceback
 
 LOG = logging.getLogger(__name__)
 __LOCALS = threading.local()
@@ -91,7 +92,7 @@ def __patch_session(thread_local):
                    "method": method,
                    "url": full_url,
                    "checkpoint_id": thread_local.checkpoint_id,
-                   "exception_str": None,
+                   "exception": None,
                    "status": None}
             # insert the initial data, we'll mutate it on completion
             thread_local.items.append(data)
@@ -103,7 +104,7 @@ def __patch_session(thread_local):
             except Exception, e:
                 LOG.exception("Error Making Request %s %s %s", method,
                               full_url, data['checkpoint_id'], extra=data)
-                data['exception_str'] = str(e)
+                data['exception'] = traceback.format_exc()
                 raise
             finally:
                 end = time()
