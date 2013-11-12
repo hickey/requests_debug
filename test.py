@@ -17,7 +17,7 @@ def client_thread_target(results_q, thread_id, url):
     for n in xrange(2):
         requests.get(
             url, 
-            params=[("thread_id", thread_id), ("n",n)]
+            params={"thread_id": thread_id, "n": n}
         )
         
     results_q.put(
