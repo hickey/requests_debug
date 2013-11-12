@@ -57,8 +57,9 @@ def uninstall_hook(thread_local=__LOCALS):
     """
     Remove the hook from the requests library
     """
-    clear_items(thread_local=thread_local)
-    reload(sessions)
+    if getattr(sessions, "_requests_debug_on", False):
+        clear_items(thread_local=thread_local)
+        reload(sessions)
 
 
 ###############################################################################
@@ -117,5 +118,6 @@ def __patch_session(thread_local):
 
         return inner
 
+    sessions._requests_debug_on = True
     sessions.Session.request = decor(sessions.Session.request)
 
