@@ -1,4 +1,5 @@
 *~
+.venv/
 .env/
 deps/
 node_modules/
