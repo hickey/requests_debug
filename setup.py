@@ -10,5 +10,6 @@ setup(
     author_email="eric@themoritzfamily.com",
     packages=["requests_debug"],
     install_requires=[
+        "simpleflake>=0.1.2,<0.2",
         ]
     )
