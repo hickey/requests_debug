@@ -102,7 +102,7 @@ def __patch_session(thread_local):
                 response = func(self, method, url, params=params, *args, **kwargs)
                 data['status'] = response.status_code
                 return response
-            except Exception, e:
+            except Exception as e:
                 LOG.exception("Error Making Request %s %s checkpoint=%s", method,
                               full_url, data['checkpoint_id'])
                 data['exception'] = traceback.format_exc()
