@@ -12,16 +12,16 @@ requests:
 
 ```python
 >>> import requests
->>> import requests_debug
+>>> from requests_debug import debug
 >>> from pprint import pprint
 >>>
->>> requests_debug.install_hook()
+>>> debug.install_hook()
 >>> requests.get("http://httpbin.org/get")
 <Response [200]>
 >>> requests.get("http://httpbin.org/status/418")
 <Response [418]>
 >>>
->>> pprint(requests_debug.items())
+>>> pprint(debug.items())
 [{'method': 'get',
   'status': 200,
   'time': '0.869',
@@ -32,10 +32,10 @@ requests:
   'time': '0.250',
   'time_float': 0.25032901763916016,
   'url': 'http://httpbin.org/status/418'}]
->>> requests_debug.clear_items()
->>> requests_debug.items()
+>>> debug.clear_items()
+>>> debug.items()
 []
->>> requests_debug.uninstall_hook()
+>>> debug.uninstall_hook()
 >>>
 ```
 
